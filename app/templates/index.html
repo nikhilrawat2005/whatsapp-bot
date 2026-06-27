@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABC Hospital - Book Appointment</title>
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <header class="navbar">
+        <div class="container nav-container">
+            <div class="logo">
+                <span class="logo-icon">➕</span>
+                <span class="logo-text">ABC Hospital</span>
+            </div>
+            <nav class="nav-links">
+                <a href="#about">About</a>
+                <a href="#doctors">Doctors</a>
+                <a href="#contact">Contact</a>
+                <a href="/admin" class="btn btn-secondary">Admin Login</a>
+            </nav>
+        </div>
+    </header>
+
+    <section class="hero">
+        <div class="container hero-container">
+            <div class="hero-content">
+                <h1>Modern Healthcare, <br><span class="highlight">Simplified Booking</span></h1>
+                <p>Welcome to ABC Hospital. Book secure, quick appointments directly through our automated WhatsApp assistant. Dynamic slot booking with direct confirmation.</p>
+                <button class="btn btn-primary btn-lg" onclick="showBookingModal()">Book Appointment</button>
+            </div>
+            <div class="hero-image-placeholder">
+                <div class="glass-card">
+                    <h3>WhatsApp Booking Bot</h3>
+                    <p>Instant booking without long registration forms.</p>
+                    <div class="pulse-ring"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">About Our Hospital</h2>
+            <div class="about-grid">
+                <div class="about-card">
+                    <h3>24/7 Medical Care</h3>
+                    <p>Always available professional clinicians and emergency operations.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Expert Specialist Doctors</h3>
+                    <p>Select specialized consultations across primary hospital departments.</p>
+                </div>
+                <div class="about-card">
+                    <h3>Modern Infrastructure</h3>
+                    <p>Advanced diagnostic facilities ensuring premium healthcare services.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="doctors" class="doctors">
+        <div class="container">
+            <h2 class="section-title">Our Specialized Departments</h2>
+            <div class="doctors-grid">
+                <div class="doctor-card">
+                    <h3>General Physician</h3>
+                    <p>Primary care and health maintenance.</p>
+                </div>
+                <div class="doctor-card">
+                    <h3>Dentist</h3>
+                    <p>Complete oral health and aesthetics.</p>
+                </div>
+                <div class="doctor-card">
+                    <h3>Orthopedic</h3>
+                    <p>Bone, joints, and muscular system specialists.</p>
+                </div>
+                <div class="doctor-card">
+                    <h3>Cardiologist</h3>
+                    <p>Heart and vascular health consultants.</p>
+                </div>
+                <div class="doctor-card">
+                    <h3>Dermatologist</h3>
+                    <p>Advanced care for skin, hair, and nails.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <p>📍 Location: 123 Health Avenue, Medical District, Suite 50</p>
+            <p>📞 Phone: +1 (234) 567-8900 | ✉ Email: support@abchospital.com</p>
+        </div>
+    </section>
+
+    <!-- Booking Modal -->
+    <div id="bookingModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeBookingModal()">&times;</span>
+            <div class="modal-body">
+                <span class="whatsapp-logo">💬</span>
+                <h2>Start WhatsApp Booking</h2>
+                <p>Please click the WhatsApp button below to start your appointment booking with our virtual assistant chatbot.</p>
+                <a href="https://wa.me/{{ wa_number_id if wa_number_id else '15550000000' }}?text=Hello" target="_blank" class="btn btn-whatsapp">
+                    Book on WhatsApp
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2026 ABC Hospital. All rights reserved.</p>
+    </footer>
+
+    <script>
+        function showBookingModal() {
+            document.getElementById('bookingModal').style.display = 'block';
+        }
+        function closeBookingModal() {
+            document.getElementById('bookingModal').style.display = 'none';
+        }
+        window.onclick = function(event) {
+            let modal = document.getElementById('bookingModal');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

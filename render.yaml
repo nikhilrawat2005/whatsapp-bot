@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: hospital-whatsapp-booking-bot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PORT
+        value: 5000
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: hospital-db
+          property: connectionString
+      - key: WHATSAPP_VERIFY_TOKEN
+        value: abc_hospital_verify_token_123
+
+databases:
+  - name: hospital-db
+    plan: free
