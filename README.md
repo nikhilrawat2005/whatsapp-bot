@@ -1,12 +1,17 @@
-# Hospital Appointment Booking System & WhatsApp Chatbot
+# 🏥 Hospital Appointment Booking System & WhatsApp Chatbot
 
-A production-ready, clean-architecture Hospital Appointment Booking System MVP featuring an automated WhatsApp chatbot integration. It enables patients to view real-time slot availability, input consultation details, and complete dynamic bookings.
+[![Python Version](https://img.shields.io/badge/python-3.10%20%7C%203.11-blue.svg)](https://www.python.org/)
+[![Flask Framework](https://img.shields.io/badge/framework-Flask-lightgrey.svg)](https://flask.palletsprojects.com/)
+[![Database ORM](https://img.shields.io/badge/orm-SQLAlchemy-red.svg)](https://www.sqlalchemy.org/)
+[![Webhook Integration](https://img.shields.io/badge/integration-Meta%20WhatsApp%20Cloud-green.svg)](https://developers.facebook.com/)
+
+A production-ready, clean-architecture Hospital Appointment Booking System MVP featuring an automated WhatsApp chatbot integration. Patients can view real-time slot availability, input consultation details, and complete dynamic bookings directly via WhatsApp.
 
 ---
 
-## Architecture & Folder Structure
+## 🏗️ Architecture & Folder Structure
 
-We follow a clean, modular pythonic project structure:
+This application follows clean-architecture guidelines:
 
 ```text
 ├── app/
@@ -23,12 +28,13 @@ We follow a clean, modular pythonic project structure:
 ├── runtime.txt         # Targeted platform runtime version
 ├── render.yaml         # Blueprint specification for Render
 ├── Procfile            # Gunicorn startup instruction file
+├── EXTERNAL_SETUP.md   # Step-by-step Meta WhatsApp Cloud API configuration guide
 └── .env.example        # Environment variable configuration template
 ```
 
 ---
 
-## Tech Stack
+## 🛠️ Tech Stack
 - **Backend Framework**: Python (Flask)
 - **Database ORM**: SQLAlchemy (supporting PostgreSQL in production and SQLite fallback locally)
 - **WSGI Production Server**: Gunicorn
@@ -36,51 +42,60 @@ We follow a clean, modular pythonic project structure:
 
 ---
 
-## Environment Variables Configuration
+## 🚀 Setup & Installation
 
-Create a `.env` file in the root project folder containing:
-```env
-PORT=5000
-SECRET_KEY=production-session-secret-key-string-here
-FLASK_ENV=production
-DATABASE_URL=postgresql://user:password@localhost:5432/dbname
-WHATSAPP_TOKEN=your_meta_permanent_access_token_here
-WHATSAPP_PHONE_NUMBER_ID=your_whatsapp_phone_number_id_here
-WHATSAPP_VERIFY_TOKEN=abc_hospital_verify_token_123
-```
+### 1. Local Application Setup
 
----
-
-## Local Installation
-
-1. Clone the repository and navigate inside the project folder:
+1. **Clone the repository**:
    ```bash
    git clone <repository-url>
    cd "whatsapp bot"
    ```
-2. Create and activate a python virtual environment:
-   ```bash
-   python -m venv venv
-   .\venv\Scripts\activate
-   ```
-3. Install the dependencies:
+
+2. **Create and activate a python virtual environment**:
+   - On Windows:
+     ```bash
+     python -m venv venv
+     .\venv\Scripts\activate
+     ```
+   - On macOS/Linux:
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate
+     ```
+
+3. **Install the dependencies**:
    ```bash
    pip install -r requirements.txt
    ```
-4. Copy the environment variables example:
+
+4. **Set up your Environment Variables**:
+   Copy `.env.example` to `.env` and fill in the values:
    ```bash
    copy .env.example .env
    ```
-5. Run the application:
+
+5. **Run the application**:
    ```bash
    python app.py
    ```
 
 ---
 
-## Deploying to Render with PostgreSQL
+## 💬 WhatsApp Integration & Local Webhook Testing
 
-This repository is pre-configured for one-click Blueprint Deployments.
+To connect this application with the WhatsApp Business API and test incoming messages locally:
+1. Setup a **Meta Developer App** and WhatsApp Platform.
+2. Run **Ngrok** to create a public HTTPS tunnel.
+3. Configure the **Webhook Callback URL** on the Meta Portal.
+
+👉 **Follow our detailed step-by-step instructions in the [External Setup Guide](EXTERNAL_SETUP.md)**.
+
+---
+
+## 🌐 Deploying to Render with PostgreSQL
+
+This repository is pre-configured for one-click Render Blueprint Deployments:
 
 1. Push this project repository to GitHub.
 2. In your Render Dashboard, click **New** ➔ **Blueprint**.
@@ -88,16 +103,7 @@ This repository is pre-configured for one-click Blueprint Deployments.
 4. Render automatically parses `render.yaml` to spin up:
    - A **PostgreSQL Web Database** service.
    - A **Python Flask Web Service** running under Gunicorn.
-5. In your Web Service settings, populate `WHATSAPP_TOKEN` and `WHATSAPP_PHONE_NUMBER_ID`.
-
----
-
-## Meta WhatsApp webhook integration
-
-1. Obtain your access credentials from the [Meta Developers Console](https://developers.facebook.com/).
-2. Run a public URL tunnel locally using ngrok:
-   ```bash
-   ngrok http 5000
-   ```
-3. Set your Meta webhook callback to `https://<your-ngrok-or-render-domain>/webhook` and verify token with `abc_hospital_verify_token_123`.
-4. Subscribe to the **messages** webhook field on the WhatsApp API configuration panel.
+5. In your Web Service settings on Render, populate the required environment variables:
+   - `WHATSAPP_TOKEN`
+   - `WHATSAPP_PHONE_NUMBER_ID`
+   - `WHATSAPP_VERIFY_TOKEN`
