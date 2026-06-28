@@ -17,6 +17,8 @@ services:
           property: connectionString
       - key: WHATSAPP_VERIFY_TOKEN
         value: abc_hospital_verify_token_123
+      - key: SESSION_SECRET
+        generateValue: true
 
 databases:
   - name: hospital-db

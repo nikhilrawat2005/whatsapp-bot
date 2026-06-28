@@ -7,6 +7,7 @@ load_dotenv()
 class Config:
     # Flask Environment Configurations
     SECRET_KEY = os.environ.get('SECRET_KEY', 'abc-hospital-session-secret-key-9988')
+    SESSION_SECRET = os.environ.get('SESSION_SECRET', SECRET_KEY)
     FLASK_ENV = os.environ.get('FLASK_ENV', 'production')
     PORT = int(os.environ.get('PORT', 5000))
     
