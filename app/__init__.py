@@ -72,11 +72,9 @@ def create_app():
 
     # Register blueprints
     from app.routes.web     import web_bp
-    from app.routes.webhook import webhook_bp
     from app.routes.chat    import chat_bp   # NEW
 
     app.register_blueprint(web_bp)
-    app.register_blueprint(webhook_bp)
     app.register_blueprint(chat_bp)          # NEW
 
     with app.app_context():

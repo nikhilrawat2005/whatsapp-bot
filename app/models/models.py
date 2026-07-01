@@ -47,24 +47,7 @@ class AvailableSlot(db.Model):
     )
 
 
-# ─────────────────────────────────────────────
-#  WhatsApp Bot State (existing, untouched)
-# ─────────────────────────────────────────────
-
-class BotState(db.Model):
-    __tablename__ = 'bot_states'
-
-    phone_number = db.Column(db.String(20), primary_key=True)
-    state        = db.Column(db.String(50), nullable=False, default='WELCOME')
-    temp_name    = db.Column(db.String(100))
-    temp_age     = db.Column(db.Integer)
-    temp_gender  = db.Column(db.String(20))
-    temp_problem = db.Column(db.Text)
-    temp_doctor  = db.Column(db.String(100))
-    temp_date    = db.Column(db.String(20))
-    temp_slot    = db.Column(db.String(20))
-    updated_at   = db.Column(db.DateTime, default=datetime.utcnow,
-                             onupdate=datetime.utcnow)
+# BotState model removed because WhatsApp Bot integrations are disabled.
 
 
 # ─────────────────────────────────────────────

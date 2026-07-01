@@ -30,15 +30,10 @@ def _send_web(patient_or_dict, template: str, **ctx):
 
 
 def _send_whatsapp(patient_or_dict, template: str, **ctx):
-    """WhatsApp channel: sends message via existing bot_service."""
-    try:
-        from app.services.bot_service import send_whatsapp_message
-        phone = getattr(patient_or_dict, 'phone_number',
-                        patient_or_dict.get('phone_number', ''))
-        if phone and template:
-            send_whatsapp_message(phone, template)
-    except Exception as e:
-        logger.error(f"WhatsApp notification failed: {e}")
+    """WhatsApp channel: stub — logs the notification."""
+    phone = getattr(patient_or_dict, 'phone_number',
+                    patient_or_dict.get('phone_number', ''))
+    logger.info(f"[WHATSAPP STUB] Would send to {phone}: {template[:60]}")
 
 
 def _send_email(patient_or_dict, template: str, **ctx):
