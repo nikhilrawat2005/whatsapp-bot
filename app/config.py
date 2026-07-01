@@ -21,13 +21,6 @@ class Config:
         SQLALCHEMY_DATABASE_URI = 'sqlite:///hospital.db'
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
-
-    # ── Meta WhatsApp API ──────────────────────────────────────────────────
-    WHATSAPP_TOKEN           = os.environ.get('WHATSAPP_TOKEN', '')
-    WHATSAPP_PHONE_NUMBER_ID = os.environ.get('WHATSAPP_PHONE_NUMBER_ID', '')
-    WHATSAPP_VERIFY_TOKEN    = os.environ.get('WHATSAPP_VERIFY_TOKEN',
-                                              'abc_hospital_verify_token_123')
-
     # ── Hospital Information (overridable via HospitalSettings table) ──────
     HOSPITAL_NAME    = os.environ.get('HOSPITAL_NAME', 'ABC Hospital')
     HOSPITAL_ADDRESS = os.environ.get('HOSPITAL_ADDRESS',

@@ -22,7 +22,6 @@ web_bp = Blueprint('web', __name__)
 def home():
     """Renders the hospital landing page."""
     return render_template('index.html',
-                           wa_number_id=Config.WHATSAPP_PHONE_NUMBER_ID,
                            hospital=Config,
                            departments=slot_service.DEPARTMENTS)
 
