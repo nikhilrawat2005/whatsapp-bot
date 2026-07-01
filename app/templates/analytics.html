@@ -1,0 +1,249 @@
+{% extends "base.html" %}
+{% block title %}Analytics — ABC Hospital{% endblock %}
+{% block breadcrumb %}Analytics{% endblock %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block content %}
+<!-- Stats Row -->
+<div class="stats-grid">
+    <div class="stat-card gradient-blue">
+        <div class="stat-card-icon"><i class="fa fa-calendar-day"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.today_appts }}</div>
+            <div class="stat-card-label">Today</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-green">
+        <div class="stat-card-icon"><i class="fa fa-circle-check"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.completed }}</div>
+            <div class="stat-card-label">Completed</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-amber">
+        <div class="stat-card-icon"><i class="fa fa-hourglass-half"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.pending }}</div>
+            <div class="stat-card-label">Pending</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-red">
+        <div class="stat-card-icon"><i class="fa fa-circle-xmark"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.cancelled }}</div>
+            <div class="stat-card-label">Cancelled</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-purple">
+        <div class="stat-card-icon"><i class="fa fa-star"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ busiest_doc.name }}</div>
+            <div class="stat-card-label">Busiest Doctor ({{ busiest_doc.count }} appts)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts Row -->
+<div class="charts-grid">
+
+    <!-- Weekly Trend -->
+    <div class="admin-card chart-card">
+        <h3 class="chart-title"><i class="fa fa-chart-line"></i> Weekly Appointments</h3>
+        <canvas id="weeklyChart" height="200"></canvas>
+    </div>
+
+    <!-- Status Distribution -->
+    <div class="admin-card chart-card">
+        <h3 class="chart-title"><i class="fa fa-chart-donut"></i> Status Distribution</h3>
+        <canvas id="statusChart" height="200"></canvas>
+    </div>
+
+    <!-- Peak Hours -->
+    <div class="admin-card chart-card chart-wide">
+        <h3 class="chart-title"><i class="fa fa-chart-bar"></i> Peak Booking Hours</h3>
+        <canvas id="peakChart" height="150"></canvas>
+    </div>
+
+    <!-- Gender Distribution -->
+    <div class="admin-card chart-card">
+        <h3 class="chart-title"><i class="fa fa-chart-pie"></i> Gender Distribution</h3>
+        <canvas id="genderChart" height="200"></canvas>
+    </div>
+
+    <!-- Department Distribution -->
+    <div class="admin-card chart-card">
+        <h3 class="chart-title"><i class="fa fa-hospital"></i> Department Breakdown</h3>
+        <canvas id="deptChart" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Doctor Stats Table -->
+<div class="admin-card">
+    <h2 class="card-title"><i class="fa fa-user-doctor"></i> Doctor Performance</h2>
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Doctor</th>
+                    <th>Total Appointments</th>
+                    <th>Completed</th>
+                    <th>Pending</th>
+                    <th>Cancelled</th>
+                    <th>Completion Rate</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for doc, s in doctor_stats.items() %}
+                <tr>
+                    <td><span class="badge badge-doctor">{{ doc }}</span></td>
+                    <td><strong>{{ s.total }}</strong></td>
+                    <td><span class="badge badge-completed">{{ s.completed }}</span></td>
+                    <td><span class="badge badge-scheduled">{{ s.pending }}</span></td>
+                    <td><span class="badge badge-cancelled">{{ s.cancelled }}</span></td>
+                    <td>
+                        {% if s.total > 0 %}
+                            {% set rate = ((s.completed / s.total) * 100)|round(1) %}
+                            <div class="progress-bar-wrap">
+                                <div class="progress-bar-fill" style="width: {{ rate }}%"></div>
+                                <span class="progress-label">{{ rate }}%</span>
+                            </div>
+                        {% else %}
+                            <span class="muted">No data</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const chartDefaults = {
+    font: { family: 'Inter, sans-serif' },
+    color: '#64748b'
+};
+Chart.defaults.font = chartDefaults.font;
+Chart.defaults.color = chartDefaults.color;
+
+// Colour palettes
+const BLUE_PALETTE = ['#3b82f6','#2563eb','#1d4ed8','#1e40af','#1e3a8a','#60a5fa','#93c5fd'];
+const STATUS_COLORS = ['#f59e0b','#3b82f6','#22c55e','#ef4444'];
+const GENDER_COLORS = ['#3b82f6','#ec4899','#8b5cf6'];
+const DEPT_COLORS   = ['#3b82f6','#10b981','#f59e0b','#ef4444','#8b5cf6','#06b6d4'];
+
+const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
+const gridColor = () => isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.06)';
+
+// ── Weekly Trend ──
+new Chart(document.getElementById('weeklyChart'), {
+    type: 'line',
+    data: {
+        labels: {{ weekly.labels | tojson }},
+        datasets: [{
+            label: 'Appointments',
+            data: {{ weekly.counts | tojson }},
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.12)',
+            fill: true,
+            tension: 0.4,
+            pointBackgroundColor: '#3b82f6',
+            pointRadius: 5,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1 } },
+            x: { grid: { color: gridColor() } }
+        }
+    }
+});
+
+// ── Status Donut ──
+new Chart(document.getElementById('statusChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ status_dist.labels | tojson }},
+        datasets: [{
+            data: {{ status_dist.counts | tojson }},
+            backgroundColor: STATUS_COLORS,
+            borderWidth: 2,
+            borderColor: isDark() ? '#1e293b' : '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '65%',
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// ── Peak Hours ──
+new Chart(document.getElementById('peakChart'), {
+    type: 'bar',
+    data: {
+        labels: {{ peak.labels | tojson }},
+        datasets: [{
+            label: 'Appointments',
+            data: {{ peak.counts | tojson }},
+            backgroundColor: 'rgba(59,130,246,0.75)',
+            borderRadius: 6,
+            borderSkipped: false,
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+            y: { beginAtZero: true, grid: { color: gridColor() }, ticks: { stepSize: 1 } },
+            x: { grid: { display: false } }
+        }
+    }
+});
+
+// ── Gender Pie ──
+new Chart(document.getElementById('genderChart'), {
+    type: 'pie',
+    data: {
+        labels: {{ gender_dist.labels | tojson }},
+        datasets: [{
+            data: {{ gender_dist.counts | tojson }},
+            backgroundColor: GENDER_COLORS,
+            borderWidth: 2,
+            borderColor: isDark() ? '#1e293b' : '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+
+// ── Department Donut ──
+new Chart(document.getElementById('deptChart'), {
+    type: 'doughnut',
+    data: {
+        labels: {{ dept_dist.labels | tojson }},
+        datasets: [{
+            data: {{ dept_dist.counts | tojson }},
+            backgroundColor: DEPT_COLORS,
+            borderWidth: 2,
+            borderColor: isDark() ? '#1e293b' : '#ffffff'
+        }]
+    },
+    options: {
+        responsive: true,
+        cutout: '55%',
+        plugins: { legend: { position: 'bottom' } }
+    }
+});
+</script>
+{% endblock %}

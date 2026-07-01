@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Patients — ABC Hospital{% endblock %}
+{% block breadcrumb %}Patients{% endblock %}
+
+{% block content %}
+<div class="admin-card">
+    <div class="card-header-row">
+        <h2 class="card-title"><i class="fa fa-users"></i> Patient Records</h2>
+        <span class="card-count">{{ total }} unique patient(s)</span>
+    </div>
+
+    <!-- Search -->
+    <form method="GET" action="/admin/patients" class="filter-bar">
+        <div class="filter-bar-group">
+            <i class="fa fa-search filter-bar-icon"></i>
+            <input type="text" name="search" placeholder="Search by name, phone, or email…"
+                   value="{{ search }}" class="filter-bar-input">
+        </div>
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-search"></i> Search
+        </button>
+        <a href="/admin/patients" class="btn btn-ghost">Reset</a>
+    </form>
+
+    {% if patients %}
+    <div class="patients-grid">
+        {% for patient in patients %}
+        <a href="/admin/patient/{{ patient.phone }}" class="patient-card-link">
+            <div class="patient-card">
+                <div class="pc-avatar">{{ patient.name[0].upper() }}</div>
+                <div class="pc-info">
+                    <div class="pc-name">{{ patient.name }}</div>
+                    <div class="pc-meta">
+                        <span><i class="fa fa-cake-candles"></i> {{ patient.age }} yrs</span>
+                        <span><i class="fa fa-venus-mars"></i> {{ patient.gender }}</span>
+                    </div>
+                    <div class="pc-phone"><i class="fa fa-phone"></i> {{ patient.phone }}</div>
+                    {% if patient.email %}<div class="pc-email"><i class="fa fa-envelope"></i> {{ patient.email }}</div>{% endif %}
+                </div>
+                <div class="pc-stats">
+                    <div class="pc-stat">
+                        <span class="pc-stat-val">{{ patient.total }}</span>
+                        <span class="pc-stat-label">Visits</span>
+                    </div>
+                    <div class="pc-last">
+                        <span class="pc-stat-label">Last Visit</span>
+                        <span class="pc-stat-val-sm">{{ patient.last_visit }}</span>
+                    </div>
+                </div>
+                <div class="pc-arrow"><i class="fa fa-chevron-right"></i></div>
+            </div>
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <div class="empty-icon">👥</div>
+        <div>No patients found{% if search %} for "{{ search }}"{% endif %}.</div>
+        {% if search %}<a href="/admin/patients" class="btn btn-primary" style="margin-top:12px">View All Patients</a>{% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

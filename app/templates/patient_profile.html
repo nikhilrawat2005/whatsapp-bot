@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% block title %}{{ patient.name }} — Patient Profile{% endblock %}
+{% block breadcrumb %}Patient Profile{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <a href="/admin/patients" class="btn btn-ghost back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Patients
+    </a>
+
+    <!-- Profile Header -->
+    <div class="admin-card profile-header-card">
+        <div class="profile-header">
+            <div class="profile-avatar">{{ patient.name[0].upper() }}</div>
+            <div class="profile-info">
+                <h2>{{ patient.name }}</h2>
+                <div class="profile-meta">
+                    <span><i class="fa fa-cake-candles"></i> {{ patient.age }} yrs</span>
+                    <span><i class="fa fa-venus-mars"></i> {{ patient.gender }}</span>
+                    <span><i class="fa fa-phone"></i> {{ patient.phone_number }}</span>
+                    {% if patient.email %}<span><i class="fa fa-envelope"></i> {{ patient.email }}</span>{% endif %}
+                </div>
+            </div>
+            <div class="profile-summary-stats">
+                <div class="pss-item">
+                    <span class="pss-val">{{ appointments|length }}</span>
+                    <span class="pss-label">Total Visits</span>
+                </div>
+                <div class="pss-item">
+                    <span class="pss-val">{{ upcoming|length }}</span>
+                    <span class="pss-label">Upcoming</span>
+                </div>
+                <div class="pss-item">
+                    <span class="pss-val">{{ past|length }}</span>
+                    <span class="pss-label">Completed</span>
+                </div>
+                <div class="pss-item">
+                    <span class="pss-val">{{ cancelled|length }}</span>
+                    <span class="pss-label">Cancelled</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="profile-tabs" id="profileTabs">
+        <button class="profile-tab active" onclick="switchTab('upcoming', this)">
+            <i class="fa fa-calendar-plus"></i> Upcoming ({{ upcoming|length }})
+        </button>
+        <button class="profile-tab" onclick="switchTab('past', this)">
+            <i class="fa fa-history"></i> Past ({{ past|length }})
+        </button>
+        <button class="profile-tab" onclick="switchTab('cancelled', this)">
+            <i class="fa fa-ban"></i> Cancelled ({{ cancelled|length }})
+        </button>
+        <button class="profile-tab" onclick="switchTab('notes', this)">
+            <i class="fa fa-note-sticky"></i> Notes
+        </button>
+    </div>
+
+    <!-- Tab: Upcoming -->
+    <div class="tab-pane active" id="tab-upcoming">
+        {% if upcoming %}
+        <div class="appt-history-list">
+            {% for appt in upcoming %}
+            <a href="/admin/appointment/{{ appt.id }}" class="appt-history-item">
+                <div class="ahi-date">
+                    <span class="ahi-day">{{ appt.booking_date[-2:] }}</span>
+                    <span class="ahi-month">{{ appt.booking_date[5:7] }}</span>
+                </div>
+                <div class="ahi-info">
+                    <div class="ahi-doctor">{{ appt.doctor }}</div>
+                    <div class="ahi-dept">{{ appt.department or 'General' }}</div>
+                    <div class="ahi-problem">{{ appt.problem or '—' }}</div>
+                </div>
+                <div class="ahi-time">{{ appt.booking_time }}</div>
+                <div class="ahi-status">
+                    <span class="badge badge-{% if appt.booking_status == 'Confirmed' %}confirmed{% else %}scheduled{% endif %}">
+                        {{ appt.booking_status }}
+                    </span>
+                </div>
+                <i class="fa fa-chevron-right ahi-arrow"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state-sm"><i class="fa fa-calendar-xmark"></i><p>No upcoming appointments.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- Tab: Past -->
+    <div class="tab-pane" id="tab-past">
+        {% if past %}
+        <div class="appt-history-list">
+            {% for appt in past %}
+            <a href="/admin/appointment/{{ appt.id }}" class="appt-history-item">
+                <div class="ahi-date">
+                    <span class="ahi-day">{{ appt.booking_date[-2:] }}</span>
+                    <span class="ahi-month">{{ appt.booking_date[5:7] }}</span>
+                </div>
+                <div class="ahi-info">
+                    <div class="ahi-doctor">{{ appt.doctor }}</div>
+                    <div class="ahi-dept">{{ appt.department or 'General' }}</div>
+                    <div class="ahi-problem">{{ appt.problem or '—' }}</div>
+                </div>
+                <div class="ahi-time">{{ appt.booking_time }}</div>
+                <div class="ahi-status">
+                    <span class="badge badge-completed">Completed</span>
+                </div>
+                <i class="fa fa-chevron-right ahi-arrow"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state-sm"><i class="fa fa-history"></i><p>No past appointments.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- Tab: Cancelled -->
+    <div class="tab-pane" id="tab-cancelled">
+        {% if cancelled %}
+        <div class="appt-history-list">
+            {% for appt in cancelled %}
+            <a href="/admin/appointment/{{ appt.id }}" class="appt-history-item cancelled-item">
+                <div class="ahi-date">
+                    <span class="ahi-day">{{ appt.booking_date[-2:] }}</span>
+                    <span class="ahi-month">{{ appt.booking_date[5:7] }}</span>
+                </div>
+                <div class="ahi-info">
+                    <div class="ahi-doctor">{{ appt.doctor }}</div>
+                    <div class="ahi-dept">{{ appt.department or 'General' }}</div>
+                    <div class="ahi-problem">{{ appt.problem or '—' }}</div>
+                </div>
+                <div class="ahi-time">{{ appt.booking_time }}</div>
+                <div class="ahi-status">
+                    <span class="badge badge-cancelled">Cancelled</span>
+                </div>
+                <i class="fa fa-chevron-right ahi-arrow"></i>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state-sm"><i class="fa fa-ban"></i><p>No cancelled appointments.</p></div>
+        {% endif %}
+    </div>
+
+    <!-- Tab: Notes -->
+    <div class="tab-pane" id="tab-notes">
+        <div class="admin-card" style="margin-top:0">
+            <h3 class="detail-section-title"><i class="fa fa-note-sticky"></i> Medical Notes (Placeholder)</h3>
+            <div class="notes-placeholder">
+                <i class="fa fa-file-medical notes-placeholder-icon"></i>
+                <p>Medical notes feature — connect to your EHR system or add structured notes per visit.</p>
+                <p class="notes-placeholder-sub">Notes added on individual appointments are visible in the appointment detail page.</p>
+            </div>
+            <div class="appt-notes-list">
+                {% for appt in appointments %}
+                    {% if appt.notes %}
+                    <div class="appt-note-item">
+                        <div class="an-date">{{ appt.booking_date }}</div>
+                        <div class="an-text">{{ appt.notes }}</div>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.profile-tab').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+}
+</script>
+{% endblock %}

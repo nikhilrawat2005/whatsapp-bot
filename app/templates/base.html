@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin — ABC Hospital{% endblock %}</title>
+    <meta name="description" content="ABC Hospital Admin Dashboard — Appointment Management System">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="/static/style.css">
+    {% block extra_head %}{% endblock %}
+</head>
+<body class="admin-body">
+
+<!-- ── Sidebar ──────────────────────────────────────────────────── -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-brand">
+        <span class="brand-icon">➕</span>
+        <span class="brand-name">ABC Hospital</span>
+    </div>
+
+    <nav class="sidebar-nav">
+        <div class="nav-section-label">MAIN</div>
+        <a href="/admin" class="nav-item {% if request.path == '/admin' %}active{% endif %}">
+            <i class="fa fa-chart-line"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/admin?date_view=today" class="nav-item {% if 'schedule' in request.path %}active{% endif %}">
+            <i class="fa fa-calendar-day"></i>
+            <span>Today's Schedule</span>
+        </a>
+
+        <div class="nav-section-label">PATIENTS</div>
+        <a href="/admin/patients" class="nav-item {% if 'patients' in request.path %}active{% endif %}">
+            <i class="fa fa-users"></i>
+            <span>Patients</span>
+        </a>
+        <a href="/admin?date_view=all" class="nav-item">
+            <i class="fa fa-calendar-check"></i>
+            <span>All Appointments</span>
+        </a>
+
+        <div class="nav-section-label">INSIGHTS</div>
+        <a href="/admin/analytics" class="nav-item {% if 'analytics' in request.path %}active{% endif %}">
+            <i class="fa fa-chart-pie"></i>
+            <span>Analytics</span>
+        </a>
+
+        <div class="nav-section-label">SYSTEM</div>
+        <a href="/admin/settings" class="nav-item {% if 'settings' in request.path %}active{% endif %}">
+            <i class="fa fa-gear"></i>
+            <span>Settings</span>
+        </a>
+        <a href="/admin/export/csv" class="nav-item">
+            <i class="fa fa-download"></i>
+            <span>Export CSV</span>
+        </a>
+        <a href="/admin/export/excel" class="nav-item">
+            <i class="fa fa-file-excel"></i>
+            <span>Export Excel</span>
+        </a>
+
+        <div class="sidebar-divider"></div>
+        <a href="/" class="nav-item">
+            <i class="fa fa-globe"></i>
+            <span>Public Site</span>
+        </a>
+    </nav>
+</aside>
+
+<!-- ── Main content area ────────────────────────────────────────── -->
+<div class="admin-layout">
+
+    <!-- Topbar -->
+    <header class="topbar">
+        <div class="topbar-left">
+            <button class="sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">
+                <i class="fa fa-bars"></i>
+            </button>
+            <div class="topbar-breadcrumb">
+                <span class="breadcrumb-hospital">ABC Hospital</span>
+                <i class="fa fa-chevron-right breadcrumb-sep"></i>
+                <span class="breadcrumb-page">{% block breadcrumb %}Dashboard{% endblock %}</span>
+            </div>
+        </div>
+        <div class="topbar-right">
+            <button class="dark-mode-toggle" id="darkModeToggle" onclick="toggleDarkMode()" title="Toggle dark mode">
+                <i class="fa fa-moon" id="darkModeIcon"></i>
+            </button>
+            <div class="topbar-admin">
+                <div class="admin-avatar">A</div>
+                <span class="admin-label">Admin</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Page content -->
+    <main class="admin-main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="admin-footer">
+        <p>&copy; 2026 ABC Hospital — Admin Panel. All rights reserved.</p>
+    </footer>
+</div>
+
+<script src="/static/admin.js"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

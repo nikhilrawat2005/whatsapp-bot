@@ -1,127 +1,214 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC Hospital - Admin Dashboard</title>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/static/style.css">
-</head>
-<body>
-    <header class="navbar admin-navbar">
-        <div class="container nav-container">
-            <div class="logo">
-                <span class="logo-icon">🔒</span>
-                <span class="logo-text">ABC Hospital Admin Dashboard</span>
-            </div>
-            <a href="/" class="btn btn-secondary">Go to Home</a>
-        </div>
-    </header>
+{% extends "base.html" %}
+{% block title %}Dashboard — ABC Hospital Admin{% endblock %}
+{% block breadcrumb %}Dashboard{% endblock %}
 
-    <div class="container admin-container">
-        <!-- Filter Card -->
-        <div class="filters-card">
-            <h2>Filter & Search</h2>
-            <form method="GET" action="/admin" class="filters-form">
-                <div class="filter-group">
-                    <label for="search">Patient Name / Phone</label>
-                    <input type="text" id="search" name="search" placeholder="Search..." value="{{ filters.search }}">
-                </div>
-                <div class="filter-group">
-                    <label for="doctor">Doctor</label>
-                    <select id="doctor" name="doctor">
-                        <option value="">All Doctors</option>
-                        {% for doc in doctors %}
-                        <option value="{{ doc }}" {% if filters.doctor == doc %}selected{% endif %}>{{ doc }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label for="date">Date</label>
-                    <input type="date" id="date" name="date" value="{{ filters.date }}">
-                </div>
-                <div class="filter-group">
-                    <label for="status">Status</label>
-                    <select id="status" name="status">
-                        <option value="">All Statuses</option>
-                        <option value="Scheduled" {% if filters.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
-                        <option value="Completed" {% if filters.status == 'Completed' %}selected{% endif %}>Completed</option>
-                        <option value="Cancelled" {% if filters.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
-                    </select>
-                </div>
-                <div class="filter-actions">
-                    <button type="submit" class="btn btn-primary">Apply Filters</button>
-                    <a href="/admin" class="btn btn-secondary">Reset</a>
-                </div>
-            </form>
+{% block content %}
+<!-- ── Stats Cards ──────────────────────────────────────────── -->
+<div class="stats-grid">
+    <div class="stat-card gradient-blue">
+        <div class="stat-card-icon"><i class="fa fa-calendar-day"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.today_appts }}</div>
+            <div class="stat-card-label">Today's Appointments</div>
         </div>
+    </div>
+    <div class="stat-card gradient-purple">
+        <div class="stat-card-icon"><i class="fa fa-calendar-clock"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.upcoming }}</div>
+            <div class="stat-card-label">Upcoming</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-amber">
+        <div class="stat-card-icon"><i class="fa fa-hourglass-half"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.pending }}</div>
+            <div class="stat-card-label">Pending</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-green">
+        <div class="stat-card-icon"><i class="fa fa-circle-check"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.completed }}</div>
+            <div class="stat-card-label">Completed</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-red">
+        <div class="stat-card-icon"><i class="fa fa-circle-xmark"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.cancelled }}</div>
+            <div class="stat-card-label">Cancelled</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-teal">
+        <div class="stat-card-icon"><i class="fa fa-users"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.total_patients }}</div>
+            <div class="stat-card-label">Total Patients</div>
+        </div>
+    </div>
+    <div class="stat-card gradient-indigo">
+        <div class="stat-card-icon"><i class="fa fa-calendar-xmark"></i></div>
+        <div class="stat-card-body">
+            <div class="stat-card-value">{{ stats.available_slots }}</div>
+            <div class="stat-card-label">Available Slots</div>
+        </div>
+    </div>
+</div>
 
-        <!-- Appointments List -->
-        <div class="appointments-card">
-            <h2>Appointments List</h2>
-            <div class="table-responsive">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Patient Name</th>
-                            <th>Age/Gender</th>
-                            <th>Doctor</th>
-                            <th>Date & Time</th>
-                            <th>Phone</th>
-                            <th>Problem</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% if appointments %}
-                            {% for appt in appointments %}
-                            <tr>
-                                <td>{{ appt.id }}</td>
-                                <td><strong>{{ appt.name }}</strong></td>
-                                <td>{{ appt.age }} / {{ appt.gender }}</td>
-                                <td><span class="badge badge-doctor">{{ appt.doctor }}</span></td>
-                                <td>{{ appt.booking_date }} at {{ appt.booking_time }}</td>
-                                <td>{{ appt.phone_number }}</td>
-                                <td><span class="problem-text" title="{{ appt.problem }}">{{ appt.problem }}</span></td>
-                                <td>
-                                    {% if appt.booking_status == 'Scheduled' %}
-                                        <span class="badge badge-scheduled">Scheduled</span>
-                                    {% elif appt.booking_status == 'Completed' %}
-                                        <span class="badge badge-completed">Completed</span>
-                                    {% else %}
-                                        <span class="badge badge-cancelled">Cancelled</span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    {% if appt.booking_status == 'Scheduled' %}
-                                        <form method="POST" action="/admin/complete/{{ appt.id }}" style="display:inline;">
-                                            <button type="submit" class="btn btn-sm btn-success">Complete</button>
-                                        </form>
-                                        <form method="POST" action="/admin/cancel/{{ appt.id }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this appointment?');">
-                                            <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
-                                        </form>
-                                    {% else %}
-                                        <span class="muted">-</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td colspan="9" style="text-align: center; padding: 2rem; color: #888;">No appointments found.</td>
-                            </tr>
-                        {% endif %}
-                    </tbody>
-                </table>
-            </div>
+<!-- ── Date Filter Tabs ─────────────────────────────────────── -->
+<div class="admin-card">
+    <div class="card-header-row">
+        <div>
+            <h2 class="card-title"><i class="fa fa-list-check"></i> Appointments</h2>
+        </div>
+        <div class="date-tabs">
+            <a href="/admin?date_view=today{% if filters.doctor %}&doctor={{ filters.doctor }}{% endif %}{% if filters.status %}&status={{ filters.status }}{% endif %}"
+               class="date-tab {% if filters.date_view == 'today' and not filters.date %}active{% endif %}">Today</a>
+            <a href="/admin?date_view=tomorrow{% if filters.doctor %}&doctor={{ filters.doctor }}{% endif %}{% if filters.status %}&status={{ filters.status }}{% endif %}"
+               class="date-tab {% if filters.date_view == 'tomorrow' %}active{% endif %}">Tomorrow</a>
+            <a href="/admin?date_view=week{% if filters.doctor %}&doctor={{ filters.doctor }}{% endif %}{% if filters.status %}&status={{ filters.status }}{% endif %}"
+               class="date-tab {% if filters.date_view == 'week' %}active{% endif %}">This Week</a>
+            <a href="/admin?date_view=all"
+               class="date-tab {% if filters.date_view == 'all' %}active{% endif %}">All</a>
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2026 ABC Hospital Admin Panel. All rights reserved.</p>
-    </footer>
-</body>
-</html>
+    <!-- ── Search & Filter Bar ───────────────────────────────── -->
+    <form method="GET" action="/admin" class="filter-bar">
+        <input type="hidden" name="date_view" value="{{ filters.date_view or 'today' }}">
+        <div class="filter-bar-group">
+            <i class="fa fa-search filter-bar-icon"></i>
+            <input type="text" name="search" placeholder="Search patient, phone, ID…"
+                   value="{{ filters.search }}" class="filter-bar-input">
+        </div>
+        <select name="doctor" class="filter-select">
+            <option value="">All Doctors</option>
+            {% for doc in doctors %}
+            <option value="{{ doc }}" {% if filters.doctor == doc %}selected{% endif %}>{{ doc }}</option>
+            {% endfor %}
+        </select>
+        <select name="status" class="filter-select">
+            <option value="">All Status</option>
+            <option value="Scheduled" {% if filters.status == 'Scheduled' %}selected{% endif %}>Scheduled</option>
+            <option value="Confirmed" {% if filters.status == 'Confirmed' %}selected{% endif %}>Confirmed</option>
+            <option value="Completed" {% if filters.status == 'Completed' %}selected{% endif %}>Completed</option>
+            <option value="Cancelled" {% if filters.status == 'Cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+        <input type="date" name="date" value="{{ filters.date }}" class="filter-select">
+        <button type="submit" class="btn btn-primary">
+            <i class="fa fa-filter"></i> Filter
+        </button>
+        <a href="/admin" class="btn btn-ghost">
+            <i class="fa fa-rotate"></i> Reset
+        </a>
+        <div class="export-btns">
+            <a href="/admin/export/csv?{{ request.query_string.decode() }}" class="btn btn-ghost btn-sm" title="Export CSV">
+                <i class="fa fa-file-csv"></i> CSV
+            </a>
+            <a href="/admin/export/excel" class="btn btn-ghost btn-sm" title="Export Excel">
+                <i class="fa fa-file-excel"></i> Excel
+            </a>
+            <button type="button" onclick="window.print()" class="btn btn-ghost btn-sm" title="Print">
+                <i class="fa fa-print"></i> Print
+            </button>
+        </div>
+    </form>
+
+    <!-- ── Appointments Table ────────────────────────────────── -->
+    <div class="table-responsive">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>#ID</th>
+                    <th>Patient</th>
+                    <th>Age / Gender</th>
+                    <th>Doctor</th>
+                    <th>Department</th>
+                    <th>Date & Time</th>
+                    <th>Phone</th>
+                    <th>Symptoms</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% if appointments %}
+                {% for appt in appointments %}
+                <tr class="appt-row" onclick="location.href='/admin/appointment/{{ appt.id }}'">
+                    <td><span class="appt-id">#{{ appt.id }}</span></td>
+                    <td>
+                        <div class="patient-cell">
+                            <div class="patient-avatar-sm">{{ appt.name[0].upper() }}</div>
+                            <div>
+                                <div class="patient-name-cell">{{ appt.name }}</div>
+                                {% if appt.email %}<div class="patient-email-cell">{{ appt.email }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td>{{ appt.age }} / {{ appt.gender }}</td>
+                    <td><span class="badge badge-doctor">{{ appt.doctor }}</span></td>
+                    <td>{{ appt.department or '—' }}</td>
+                    <td>
+                        <div class="datetime-cell">
+                            <span class="date-val">{{ appt.booking_date }}</span>
+                            <span class="time-val">{{ appt.booking_time }}</span>
+                        </div>
+                    </td>
+                    <td><span class="phone-cell">{{ appt.phone_number }}</span></td>
+                    <td><span class="problem-text" title="{{ appt.problem }}">{{ appt.problem or '—' }}</span></td>
+                    <td>
+                        {% if appt.booking_status == 'Scheduled' %}
+                            <span class="badge badge-scheduled">Scheduled</span>
+                        {% elif appt.booking_status == 'Confirmed' %}
+                            <span class="badge badge-confirmed">Confirmed</span>
+                        {% elif appt.booking_status == 'Completed' %}
+                            <span class="badge badge-completed">Completed</span>
+                        {% else %}
+                            <span class="badge badge-cancelled">Cancelled</span>
+                        {% endif %}
+                    </td>
+                    <td onclick="event.stopPropagation()">
+                        {% if appt.booking_status in ['Scheduled', 'Confirmed'] %}
+                            {% if appt.booking_status == 'Scheduled' %}
+                            <form method="POST" action="/admin/confirm/{{ appt.id }}" style="display:inline">
+                                <button type="submit" class="btn btn-xs btn-confirmed" title="Confirm">
+                                    <i class="fa fa-check"></i>
+                                </button>
+                            </form>
+                            {% endif %}
+                            <form method="POST" action="/admin/complete/{{ appt.id }}" style="display:inline">
+                                <button type="submit" class="btn btn-xs btn-success" title="Mark Complete">
+                                    <i class="fa fa-circle-check"></i>
+                                </button>
+                            </form>
+                            <form method="POST" action="/admin/cancel/{{ appt.id }}" style="display:inline"
+                                  onsubmit="return confirm('Cancel appointment for {{ appt.name }}?')">
+                                <button type="submit" class="btn btn-xs btn-danger" title="Cancel">
+                                    <i class="fa fa-times"></i>
+                                </button>
+                            </form>
+                        {% else %}
+                            <span class="muted">—</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="10" class="empty-state">
+                        <div class="empty-icon">📅</div>
+                        <div>No appointments found for the selected filters.</div>
+                        <a href="/admin" class="btn btn-primary" style="margin-top:12px">View All</a>
+                    </td>
+                </tr>
+            {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="table-footer">
+        Showing <strong>{{ appointments|length }}</strong> appointment(s)
+        <span class="table-footer-hint">· Click any row to view details</span>
+    </div>
+</div>
+{% endblock %}

@@ -1,134 +1,390 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABC Hospital - Book Appointment</title>
-    <!-- Google Fonts Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>ABC Hospital — Modern Healthcare, Simplified</title>
+    <meta name="description" content="ABC Hospital offers expert medical care with easy online appointment booking. Consult top doctors in General Medicine, Cardiology, Orthopedics, Dermatology, and Dentistry.">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="/static/style.css">
 </head>
-<body>
-    <header class="navbar">
-        <div class="container nav-container">
-            <div class="logo">
-                <span class="logo-icon">➕</span>
-                <span class="logo-text">ABC Hospital</span>
-            </div>
-            <nav class="nav-links">
-                <a href="#about">About</a>
-                <a href="#doctors">Doctors</a>
-                <a href="#contact">Contact</a>
-                <a href="/admin" class="btn btn-secondary">Admin Login</a>
-            </nav>
-        </div>
-    </header>
+<body class="public-body">
 
-    <section class="hero">
-        <div class="container hero-container">
-            <div class="hero-content">
-                <h1>Modern Healthcare, <br><span class="highlight">Simplified Booking</span></h1>
-                <p>Welcome to ABC Hospital. Book secure, quick appointments directly through our automated WhatsApp assistant. Dynamic slot booking with direct confirmation.</p>
-                <button class="btn btn-primary btn-lg" onclick="showBookingModal()">Book Appointment</button>
-            </div>
-            <div class="hero-image-placeholder">
-                <div class="glass-card">
-                    <h3>WhatsApp Booking Bot</h3>
-                    <p>Instant booking without long registration forms.</p>
-                    <div class="pulse-ring"></div>
-                </div>
-            </div>
+<!-- ── Navigation ─────────────────────────────────────────────── -->
+<header class="navbar" id="navbar">
+    <div class="container nav-container">
+        <div class="logo">
+            <span class="logo-icon">➕</span>
+            <span class="logo-text">ABC Hospital</span>
         </div>
-    </section>
+        <nav class="nav-links" id="navLinks">
+            <a href="#about">About</a>
+            <a href="#departments">Departments</a>
+            <a href="#doctors">Doctors</a>
+            <a href="#contact">Contact</a>
+            <a href="/admin" class="btn btn-outline-primary">Admin Login</a>
+        </nav>
+        <button class="nav-mobile-toggle" onclick="toggleNav()">
+            <i class="fa fa-bars"></i>
+        </button>
+    </div>
+</header>
 
-    <section id="about" class="about">
-        <div class="container">
-            <h2 class="section-title">About Our Hospital</h2>
-            <div class="about-grid">
-                <div class="about-card">
-                    <h3>24/7 Medical Care</h3>
-                    <p>Always available professional clinicians and emergency operations.</p>
-                </div>
-                <div class="about-card">
-                    <h3>Expert Specialist Doctors</h3>
-                    <p>Select specialized consultations across primary hospital departments.</p>
-                </div>
-                <div class="about-card">
-                    <h3>Modern Infrastructure</h3>
-                    <p>Advanced diagnostic facilities ensuring premium healthcare services.</p>
-                </div>
+<!-- ── Hero ───────────────────────────────────────────────────── -->
+<section class="hero">
+    <div class="hero-bg-circles">
+        <div class="hero-circle c1"></div>
+        <div class="hero-circle c2"></div>
+        <div class="hero-circle c3"></div>
+    </div>
+    <div class="container hero-container">
+        <div class="hero-content" data-animate="slide-up">
+            <div class="hero-badge">
+                <span class="pulse-dot"></span>
+                AI-Powered Reception — Always Available
             </div>
-        </div>
-    </section>
-
-    <section id="doctors" class="doctors">
-        <div class="container">
-            <h2 class="section-title">Our Specialized Departments</h2>
-            <div class="doctors-grid">
-                <div class="doctor-card">
-                    <h3>General Physician</h3>
-                    <p>Primary care and health maintenance.</p>
-                </div>
-                <div class="doctor-card">
-                    <h3>Dentist</h3>
-                    <p>Complete oral health and aesthetics.</p>
-                </div>
-                <div class="doctor-card">
-                    <h3>Orthopedic</h3>
-                    <p>Bone, joints, and muscular system specialists.</p>
-                </div>
-                <div class="doctor-card">
-                    <h3>Cardiologist</h3>
-                    <p>Heart and vascular health consultants.</p>
-                </div>
-                <div class="doctor-card">
-                    <h3>Dermatologist</h3>
-                    <p>Advanced care for skin, hair, and nails.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contact" class="contact">
-        <div class="container">
-            <h2 class="section-title">Contact Us</h2>
-            <p>📍 Location: 123 Health Avenue, Medical District, Suite 50</p>
-            <p>📞 Phone: +1 (234) 567-8900 | ✉ Email: support@abchospital.com</p>
-        </div>
-    </section>
-
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeBookingModal()">&times;</span>
-            <div class="modal-body">
-                <span class="whatsapp-logo">💬</span>
-                <h2>Start WhatsApp Booking</h2>
-                <p>Please click the WhatsApp button below to start your appointment booking with our virtual assistant chatbot.</p>
-                <a href="https://wa.me/{{ wa_number_id if wa_number_id else '15550000000' }}?text=Hello" target="_blank" class="btn btn-whatsapp">
-                    Book on WhatsApp
+            <h1>Modern Healthcare,<br><span class="gradient-text">Simplified Booking</span></h1>
+            <p class="hero-sub">Book appointments instantly through our intelligent AI receptionist. No long forms, no waiting — just seamless healthcare access.</p>
+            <div class="hero-actions">
+                <button class="btn btn-primary btn-lg" onclick="openChat()">
+                    <i class="fa fa-comment-dots"></i> Chat with AI Receptionist
+                </button>
+                <a href="#departments" class="btn btn-ghost btn-lg">
+                    <i class="fa fa-stethoscope"></i> Our Departments
                 </a>
+            </div>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <span class="stat-num" data-count="5">0</span><span>+</span>
+                    <span class="stat-label">Departments</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num" data-count="10">0</span><span>+</span>
+                    <span class="stat-label">Specialist Doctors</span>
+                </div>
+                <div class="stat-divider"></div>
+                <div class="stat-item">
+                    <span class="stat-num">24</span><span>/7</span>
+                    <span class="stat-label">AI Reception</span>
+                </div>
+            </div>
+        </div>
+        <div class="hero-visual" data-animate="fade-in">
+            <div class="hero-card glass-card">
+                <div class="hcard-header">
+                    <div class="hcard-avatar">🤖</div>
+                    <div>
+                        <div class="hcard-name">AI Receptionist</div>
+                        <div class="hcard-status"><span class="online-dot"></span>Online now</div>
+                    </div>
+                </div>
+                <div class="hcard-messages">
+                    <div class="hcard-msg bot">
+                        <span>Good morning! 👋 Welcome to ABC Hospital.</span>
+                    </div>
+                    <div class="hcard-msg bot">
+                        <span>How can I assist you today?</span>
+                    </div>
+                    <div class="hcard-chip-row">
+                        <span class="hcard-chip">📅 Book Appointment</span>
+                        <span class="hcard-chip">👨‍⚕️ Doctors</span>
+                        <span class="hcard-chip">🏥 Departments</span>
+                    </div>
+                    <div class="hcard-msg user">
+                        <span>Book Appointment</span>
+                    </div>
+                    <div class="hcard-typing">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+</section>
 
-    <footer>
-        <p>&copy; 2026 ABC Hospital. All rights reserved.</p>
-    </footer>
+<!-- ── About / Features ──────────────────────────────────────── -->
+<section id="about" class="features">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Why Choose ABC Hospital?</h2>
+            <p class="section-sub">Trusted by thousands of patients for expert medical care</p>
+        </div>
+        <div class="features-grid">
+            <div class="feature-card" data-animate="slide-up">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8)">
+                    <i class="fa fa-robot"></i>
+                </div>
+                <h3>AI-Powered Reception</h3>
+                <p>Book, reschedule, or cancel appointments 24/7 through our intelligent AI chatbot receptionist.</p>
+            </div>
+            <div class="feature-card" data-animate="slide-up" style="animation-delay:0.1s">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #10b981, #047857)">
+                    <i class="fa fa-clock"></i>
+                </div>
+                <h3>Instant Confirmation</h3>
+                <p>Slots are locked in real-time preventing double bookings. Your appointment is secured immediately.</p>
+            </div>
+            <div class="feature-card" data-animate="slide-up" style="animation-delay:0.2s">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706)">
+                    <i class="fa fa-user-doctor"></i>
+                </div>
+                <h3>Expert Specialists</h3>
+                <p>Consult top specialist doctors across 5 departments with individual scheduling systems.</p>
+            </div>
+            <div class="feature-card" data-animate="slide-up" style="animation-delay:0.3s">
+                <div class="feature-icon" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9)">
+                    <i class="fa fa-shield-halved"></i>
+                </div>
+                <h3>Secure & Private</h3>
+                <p>Your medical data is encrypted and stored securely. We comply with healthcare data standards.</p>
+            </div>
+        </div>
+    </div>
+</section>
 
-    <script>
-        function showBookingModal() {
-            document.getElementById('bookingModal').style.display = 'block';
-        }
-        function closeBookingModal() {
-            document.getElementById('bookingModal').style.display = 'none';
-        }
-        window.onclick = function(event) {
-            let modal = document.getElementById('bookingModal');
-            if (event.target == modal) {
-                modal.style.display = 'none';
+<!-- ── Departments ────────────────────────────────────────────── -->
+<section id="departments" class="departments">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Our Departments</h2>
+            <p class="section-sub">Expert care across all major medical specialties</p>
+        </div>
+        <div class="dept-grid">
+            {% for dept_name, dept_info in departments.items() %}
+            <div class="dept-card" data-animate="slide-up">
+                <div class="dept-icon">{{ dept_info.icon }}</div>
+                <h3>{{ dept_name }}</h3>
+                <p>{{ dept_info.description }}</p>
+                <div class="dept-doctors">
+                    {% for doc in dept_info.doctors %}
+                    <span class="doctor-chip">{{ doc }}</span>
+                    {% endfor %}
+                </div>
+                <button class="btn btn-sm btn-primary dept-book-btn" onclick="openChatWith('Book Appointment in {{ dept_name }}')">
+                    Book Appointment
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Doctors ────────────────────────────────────────────────── -->
+<section id="doctors" class="doctors-section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Meet Our Specialists</h2>
+            <p class="section-sub">Experienced professionals dedicated to your health</p>
+        </div>
+        <div class="doctors-grid">
+            {% for dept_name, dept_info in departments.items() %}
+            {% for doc in dept_info.doctors %}
+            <div class="doctor-card" data-animate="fade-in">
+                <div class="doctor-avatar">
+                    {{ dept_info.icon }}
+                </div>
+                <div class="doctor-info">
+                    <h4>{{ doc }}</h4>
+                    <span class="doctor-dept">{{ dept_name }}</span>
+                </div>
+                <button class="btn btn-sm btn-outline-primary" onclick="openChatWith('Book with {{ doc }}')">
+                    Book Now
+                </button>
+            </div>
+            {% endfor %}
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- ── Contact ────────────────────────────────────────────────── -->
+<section id="contact" class="contact-section">
+    <div class="container">
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h2>Contact & Emergency</h2>
+                <p class="contact-sub">We're here to help, day and night</p>
+                <div class="contact-items">
+                    <div class="contact-item">
+                        <div class="contact-item-icon"><i class="fa fa-location-dot"></i></div>
+                        <div>
+                            <strong>Location</strong>
+                            <span>{{ hospital.HOSPITAL_ADDRESS }}</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon"><i class="fa fa-phone"></i></div>
+                        <div>
+                            <strong>Phone</strong>
+                            <span>{{ hospital.HOSPITAL_PHONE }}</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon"><i class="fa fa-envelope"></i></div>
+                        <div>
+                            <strong>Email</strong>
+                            <span>{{ hospital.HOSPITAL_EMAIL }}</span>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-item-icon"><i class="fa fa-clock"></i></div>
+                        <div>
+                            <strong>Hours</strong>
+                            <span>{{ hospital.HOSPITAL_HOURS }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="emergency-card glass-card">
+                <div class="emergency-icon">🚨</div>
+                <h3>Emergency Services</h3>
+                <p>For life-threatening emergencies, our team is available 24/7.</p>
+                <div class="emergency-numbers">
+                    <div class="emg-num">
+                        <span class="emg-label">Emergency</span>
+                        <span class="emg-val">112</span>
+                    </div>
+                    <div class="emg-num">
+                        <span class="emg-label">Ambulance</span>
+                        <span class="emg-val">108</span>
+                    </div>
+                </div>
+                <button class="btn btn-primary" onclick="openChat()">
+                    <i class="fa fa-comment-dots"></i> Chat with Reception
+                </button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Footer ─────────────────────────────────────────────────── -->
+<footer class="public-footer">
+    <div class="container footer-container">
+        <div class="footer-brand">
+            <span class="logo-icon">➕</span>
+            <span class="logo-text">ABC Hospital</span>
+        </div>
+        <p class="footer-copy">&copy; 2026 ABC Hospital. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/admin">Admin</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </div>
+</footer>
+
+<!-- ════════════════════════════════════════════════════════════
+     AI CHAT WIDGET
+════════════════════════════════════════════════════════════ -->
+<div id="chatWidget" class="chat-widget">
+
+    <!-- Floating button -->
+    <button class="chat-fab" id="chatFab" onclick="toggleChat()" title="Chat with AI Receptionist">
+        <span class="chat-fab-icon" id="chatFabIcon">
+            <i class="fa fa-comment-dots"></i>
+        </span>
+        <span class="chat-fab-close hidden" id="chatFabClose">
+            <i class="fa fa-times"></i>
+        </span>
+        <span class="chat-fab-badge" id="chatFabBadge">1</span>
+    </button>
+
+    <!-- Chat Panel -->
+    <div class="chat-panel" id="chatPanel">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-header-info">
+                <div class="chat-avatar">🤖</div>
+                <div>
+                    <div class="chat-header-name">AI Receptionist</div>
+                    <div class="chat-header-status">
+                        <span class="online-dot-sm"></span>
+                        ABC Hospital — Online
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <button onclick="resetChat()" title="Restart conversation" class="chat-action-btn">
+                    <i class="fa fa-rotate"></i>
+                </button>
+                <button onclick="toggleChat()" title="Close" class="chat-action-btn">
+                    <i class="fa fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Messages -->
+        <div class="chat-messages" id="chatMessages"></div>
+
+        <!-- Quick Buttons -->
+        <div class="chat-buttons" id="chatButtons"></div>
+
+        <!-- Input area -->
+        <div class="chat-input-area">
+            <input
+                type="text"
+                id="chatInput"
+                class="chat-input"
+                placeholder="Type your message…"
+                onkeydown="handleInputKey(event)"
+            >
+            <button class="chat-send-btn" onclick="sendMessage()" id="chatSendBtn">
+                <i class="fa fa-paper-plane"></i>
+            </button>
+        </div>
+
+        <div class="chat-footer-note">
+            <i class="fa fa-lock"></i> Your conversation is secure and private
+        </div>
+    </div>
+</div>
+
+<script src="/static/chat.js"></script>
+<script>
+    // Counter animation
+    document.querySelectorAll('.stat-num[data-count]').forEach(el => {
+        const target = parseInt(el.dataset.count);
+        let curr = 0;
+        const step = Math.ceil(target / 30);
+        const timer = setInterval(() => {
+            curr = Math.min(curr + step, target);
+            el.textContent = curr;
+            if (curr >= target) clearInterval(timer);
+        }, 40);
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+        const nb = document.getElementById('navbar');
+        nb.classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile nav
+    function toggleNav() {
+        document.getElementById('navLinks').classList.toggle('open');
+    }
+
+    // Open chat with a pre-filled message
+    function openChatWith(message) {
+        openChat();
+        setTimeout(() => {
+            sendChatMessage(message);
+        }, 600);
+    }
+
+    // Scroll-based animations
+    const animEls = document.querySelectorAll('[data-animate]');
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('animated');
+                observer.unobserve(e.target);
             }
-        }
-    </script>
+        });
+    }, { threshold: 0.1 });
+    animEls.forEach(el => observer.observe(el));
+</script>
 </body>
 </html>

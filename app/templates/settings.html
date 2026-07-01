@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Settings — ABC Hospital{% endblock %}
+{% block breadcrumb %}Settings{% endblock %}
+
+{% block content %}
+<form method="POST" action="/admin/settings">
+<div class="settings-grid">
+
+    <!-- Hospital Information -->
+    <div class="admin-card settings-card">
+        <h2 class="card-title"><i class="fa fa-hospital"></i> Hospital Information</h2>
+        <p class="settings-desc">These details appear on the public website and patient notifications.</p>
+        <div class="settings-fields">
+            <div class="settings-field">
+                <label for="hospital_name">Hospital Name</label>
+                <input type="text" id="hospital_name" name="hospital_name"
+                       value="{{ settings.hospital_name }}" placeholder="ABC Hospital">
+            </div>
+            <div class="settings-field">
+                <label for="hospital_address">Address</label>
+                <input type="text" id="hospital_address" name="hospital_address"
+                       value="{{ settings.hospital_address }}" placeholder="123 Health Ave…">
+            </div>
+            <div class="settings-field">
+                <label for="hospital_phone">Phone Number</label>
+                <input type="text" id="hospital_phone" name="hospital_phone"
+                       value="{{ settings.hospital_phone }}" placeholder="+1 234 567 8900">
+            </div>
+            <div class="settings-field">
+                <label for="hospital_email">Email</label>
+                <input type="email" id="hospital_email" name="hospital_email"
+                       value="{{ settings.hospital_email }}" placeholder="support@hospital.com">
+            </div>
+            <div class="settings-field settings-field-full">
+                <label for="hospital_hours">Working Hours</label>
+                <input type="text" id="hospital_hours" name="hospital_hours"
+                       value="{{ settings.hospital_hours }}" placeholder="Mon–Sat: 9:00 AM – 5:00 PM">
+            </div>
+        </div>
+    </div>
+
+    <!-- Slot Configuration -->
+    <div class="admin-card settings-card">
+        <h2 class="card-title"><i class="fa fa-clock"></i> Slot Configuration</h2>
+        <p class="settings-desc">Controls how appointment slots are generated. Restart the server after changes.</p>
+        <div class="settings-fields">
+            <div class="settings-field">
+                <label for="slot_duration">Slot Duration (minutes)</label>
+                <select id="slot_duration" name="slot_duration">
+                    {% for d in [15, 20, 30, 45, 60] %}
+                    <option value="{{ d }}" {% if settings.slot_duration == d|string %}selected{% endif %}>{{ d }} min</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="settings-field">
+                <label for="max_per_slot">Max Appointments per Slot</label>
+                <select id="max_per_slot" name="max_per_slot">
+                    {% for n in [1, 2, 3, 5] %}
+                    <option value="{{ n }}" {% if settings.max_per_slot == n|string %}selected{% endif %}>{{ n }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="settings-field">
+                <label for="lunch_start">Lunch Break Start</label>
+                <input type="time" id="lunch_start" name="lunch_start" value="{{ settings.lunch_start }}">
+            </div>
+            <div class="settings-field">
+                <label for="lunch_end">Lunch Break End</label>
+                <input type="time" id="lunch_end" name="lunch_end" value="{{ settings.lunch_end }}">
+            </div>
+        </div>
+    </div>
+
+    <!-- Doctors List (read-only display) -->
+    <div class="admin-card settings-card settings-card-full">
+        <h2 class="card-title"><i class="fa fa-user-doctor"></i> Registered Doctors</h2>
+        <p class="settings-desc">Doctors are defined in <code>app/services/slot_service.py → DEPARTMENTS</code>. Edit the file to add or remove doctors. Slots will be regenerated on next startup.</p>
+        <div class="doctors-settings-list">
+            {% for doc in doctors %}
+            <div class="doc-settings-item">
+                <div class="doc-si-avatar">{{ doc[3] }}</div>
+                <span>{{ doc }}</span>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Communication (Future) -->
+    <div class="admin-card settings-card settings-card-full">
+        <h2 class="card-title"><i class="fa fa-comment-dots"></i> Notification Channels</h2>
+        <p class="settings-desc">Configure notification channels for appointment confirmations and reminders.</p>
+        <div class="channels-grid">
+            <div class="channel-card active-channel">
+                <div class="channel-icon">💬</div>
+                <div class="channel-info">
+                    <div class="channel-name">Web Chat</div>
+                    <div class="channel-status active">Active</div>
+                </div>
+            </div>
+            <div class="channel-card future-channel">
+                <div class="channel-icon">📱</div>
+                <div class="channel-info">
+                    <div class="channel-name">WhatsApp</div>
+                    <div class="channel-status">Configure via .env → WHATSAPP_TOKEN</div>
+                </div>
+            </div>
+            <div class="channel-card future-channel">
+                <div class="channel-icon">✉️</div>
+                <div class="channel-info">
+                    <div class="channel-name">Email</div>
+                    <div class="channel-status">Connect SMTP in communication_service.py</div>
+                </div>
+            </div>
+            <div class="channel-card future-channel">
+                <div class="channel-icon">💬</div>
+                <div class="channel-info">
+                    <div class="channel-name">Telegram</div>
+                    <div class="channel-status">Connect Telegram Bot API</div>
+                </div>
+            </div>
+            <div class="channel-card future-channel">
+                <div class="channel-icon">📨</div>
+                <div class="channel-info">
+                    <div class="channel-name">SMS</div>
+                    <div class="channel-status">Connect Twilio / Fast2SMS</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Save button -->
+<div class="settings-save-bar">
+    <button type="submit" class="btn btn-primary btn-lg">
+        <i class="fa fa-save"></i> Save Settings
+    </button>
+    <a href="/admin" class="btn btn-ghost btn-lg">Cancel</a>
+</div>
+</form>
+{% endblock %}

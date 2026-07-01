@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block title %}Appointment #{{ appt.id }} — ABC Hospital{% endblock %}
+{% block breadcrumb %}Appointment Detail{% endblock %}
+
+{% block content %}
+<div class="detail-page">
+    <!-- Back button -->
+    <a href="/admin" class="btn btn-ghost back-btn">
+        <i class="fa fa-arrow-left"></i> Back to Dashboard
+    </a>
+
+    <div class="detail-grid">
+        <!-- Left: Patient + Appointment Info -->
+        <div class="detail-main">
+
+            <!-- Patient Card -->
+            <div class="admin-card detail-card">
+                <div class="detail-patient-header">
+                    <div class="detail-avatar">{{ appt.name[0].upper() }}</div>
+                    <div class="detail-patient-info">
+                        <h2>{{ appt.name }}</h2>
+                        <div class="detail-meta-row">
+                            <span><i class="fa fa-cake-candles"></i> {{ appt.age }} yrs</span>
+                            <span><i class="fa fa-venus-mars"></i> {{ appt.gender }}</span>
+                            <span><i class="fa fa-phone"></i> {{ appt.phone_number }}</span>
+                            {% if appt.email %}<span><i class="fa fa-envelope"></i> {{ appt.email }}</span>{% endif %}
+                        </div>
+                    </div>
+                    <div class="detail-status-badge">
+                        {% if appt.booking_status == 'Scheduled' %}
+                            <span class="badge badge-scheduled badge-lg">Scheduled</span>
+                        {% elif appt.booking_status == 'Confirmed' %}
+                            <span class="badge badge-confirmed badge-lg">Confirmed</span>
+                        {% elif appt.booking_status == 'Completed' %}
+                            <span class="badge badge-completed badge-lg">Completed</span>
+                        {% else %}
+                            <span class="badge badge-cancelled badge-lg">Cancelled</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Appointment Details -->
+            <div class="admin-card detail-card">
+                <h3 class="detail-section-title"><i class="fa fa-calendar-check"></i> Appointment Details</h3>
+                <div class="detail-info-grid">
+                    <div class="detail-info-item">
+                        <span class="detail-label">Appointment ID</span>
+                        <span class="detail-value">#{{ appt.id }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-label">Doctor</span>
+                        <span class="detail-value"><span class="badge badge-doctor">{{ appt.doctor }}</span></span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-label">Department</span>
+                        <span class="detail-value">{{ appt.department or 'General' }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">{{ appt.booking_date }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value">{{ appt.booking_time }}</span>
+                    </div>
+                    <div class="detail-info-item">
+                        <span class="detail-label">Booked At</span>
+                        <span class="detail-value">
+                            {% if appt.created_at %}{{ appt.created_at.strftime('%d %b %Y, %I:%M %p') }}{% else %}—{% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-symptoms">
+                    <span class="detail-label">Symptoms / Reason</span>
+                    <p class="detail-symptoms-text">{{ appt.problem or 'Not provided' }}</p>
+                </div>
+            </div>
+
+            <!-- Admin Notes -->
+            <div class="admin-card detail-card">
+                <h3 class="detail-section-title"><i class="fa fa-note-sticky"></i> Admin Notes</h3>
+                <form method="POST" action="/admin/appointment/{{ appt.id }}/notes">
+                    <textarea name="notes" class="notes-textarea"
+                              placeholder="Add clinical notes, follow-up reminders, or admin remarks…">{{ appt.notes or '' }}</textarea>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fa fa-save"></i> Save Notes
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right: Actions + Chat History -->
+        <div class="detail-sidebar">
+
+            <!-- Quick Actions -->
+            <div class="admin-card detail-card">
+                <h3 class="detail-section-title"><i class="fa fa-bolt"></i> Quick Actions</h3>
+                <div class="action-buttons-col">
+                    {% if appt.booking_status in ['Scheduled', 'Confirmed'] %}
+                        {% if appt.booking_status == 'Scheduled' %}
+                        <form method="POST" action="/admin/confirm/{{ appt.id }}">
+                            <button type="submit" class="btn btn-confirmed w-full">
+                                <i class="fa fa-check-circle"></i> Confirm Appointment
+                            </button>
+                        </form>
+                        {% endif %}
+                        <form method="POST" action="/admin/complete/{{ appt.id }}">
+                            <button type="submit" class="btn btn-success w-full">
+                                <i class="fa fa-circle-check"></i> Mark as Completed
+                            </button>
+                        </form>
+                        <form method="POST" action="/admin/cancel/{{ appt.id }}"
+                              onsubmit="return confirm('Cancel this appointment?')">
+                            <button type="submit" class="btn btn-danger w-full">
+                                <i class="fa fa-ban"></i> Cancel Appointment
+                            </button>
+                        </form>
+                    {% else %}
+                        <div class="action-disabled">
+                            No actions available for {{ appt.booking_status }} appointments.
+                        </div>
+                    {% endif %}
+                    <a href="/admin/patient/{{ appt.phone_number }}" class="btn btn-ghost w-full">
+                        <i class="fa fa-user"></i> View Patient Profile
+                    </a>
+                    <a href="/admin" class="btn btn-ghost w-full">
+                        <i class="fa fa-arrow-left"></i> Back to Dashboard
+                    </a>
+                </div>
+            </div>
+
+            <!-- Chat History -->
+            <div class="admin-card detail-card">
+                <h3 class="detail-section-title">
+                    <i class="fa fa-message"></i> Chat History
+                    <span class="chat-count-badge">{{ chat_history|length }}</span>
+                </h3>
+                {% if chat_history %}
+                <div class="chat-history-list">
+                    {% for msg in chat_history %}
+                    <div class="chat-history-msg {{ msg.sender }}">
+                        <div class="ch-sender">
+                            {% if msg.sender == 'bot' %}🤖 AI Receptionist{% else %}👤 Patient{% endif %}
+                        </div>
+                        <div class="ch-text">{{ msg.message }}</div>
+                        <div class="ch-time">
+                            {% if msg.timestamp %}{{ msg.timestamp.strftime('%d %b, %I:%M %p') }}{% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="empty-state-sm">
+                    <i class="fa fa-comment-slash"></i>
+                    <p>No chat history available for this appointment.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
